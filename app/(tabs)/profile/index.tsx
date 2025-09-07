@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Avatar, Text, Button, Card, Divider, useTheme, List } from 'react-native-paper';
-import { useAuth } from '../../../contexts/AuthContext';
 import { Link } from 'expo-router';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Avatar, Button, Card, List, Text, useTheme } from 'react-native-paper';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const ProfileScreen: React.FC = () => {
   const theme = useTheme();
@@ -19,7 +19,7 @@ const ProfileScreen: React.FC = () => {
       </Card>
 
       <List.Section style={styles.listSection}>
-        <Link href="/profile/edit" asChild>
+        <Link href="./edit" asChild>
           <List.Item
             title="Editar Perfil"
             left={() => <List.Icon icon="pencil" />}

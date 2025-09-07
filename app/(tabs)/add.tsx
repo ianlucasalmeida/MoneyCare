@@ -1,9 +1,9 @@
 // app/(tabs)/add.tsx
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Appbar, TextInput, Button, ToggleButton, Chip, Text, useTheme } from 'react-native-paper';
-import { useTransactions } from '../../contexts/TransactionContext';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Appbar, Button, Chip, Text, TextInput, ToggleButton, useTheme } from 'react-native-paper';
 import { expenseCategories } from '../../constants/categories';
+import { useTransactions } from '../../contexts/TransactionContext';
 import { Category } from '../../types';
 
 const AddTransactionScreen: React.FC = () => {
@@ -33,8 +33,8 @@ const AddTransactionScreen: React.FC = () => {
       <Appbar.Header><Appbar.Content title="Adicionar Transação" /></Appbar.Header>
       <ScrollView contentContainerStyle={styles.content}>
         <ToggleButton.Row onValueChange={value => value && setType(value as any)} value={type}>
-          <ToggleButton icon="arrow-down-bold-box" value="saida">Saída</ToggleButton>
-          <ToggleButton icon="arrow-up-bold-box" value="entrada">Entrada</ToggleButton>
+          <ToggleButton icon="arrow-down-bold-box" value="saida" />
+          <ToggleButton icon="arrow-up-bold-box" value="entrada" />
         </ToggleButton.Row>
         <TextInput label="Descrição" value={description} onChangeText={setDescription} mode="outlined" style={styles.input} />
         <TextInput label="Valor (R$)" value={amount} onChangeText={setAmount} mode="outlined" keyboardType="numeric" style={styles.input} />
