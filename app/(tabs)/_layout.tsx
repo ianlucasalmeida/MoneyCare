@@ -1,45 +1,79 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
+import { Tabs } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
+import { TransactionProvider } from '../../contexts/TransactionContext';
 import { Platform } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
+  const iconSize = 26; // Tamanho padrão para todos os ícones
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
+    <TransactionProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: '#FFFFFF',
+          tabBarInactiveTintColor: '#FFFFFF',
+          tabBarStyle: {
             position: 'absolute',
+            bottom: Platform.OS === 'ios' ? 30 : 20,
+            marginHorizontal: 20,
+            backgroundColor: theme.colors.primary,
+            borderRadius: 30,
+            height: 60, // Altura ajustada
+            paddingBottom: Platform.OS === 'ios' ? 0 : 0,
+            elevation: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
           },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="view-dashboard" color={color} size={iconSize} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="list"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="format-list-bulleted" color={color} size={iconSize} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="add"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="plus-circle" color={color} size={iconSize + 10} /> // Ícone central maior
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="currencies"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="currency-usd" color={color} size={iconSize} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account-circle" color={color} size={iconSize} />
+            ),
+          }}
+        />
+      </Tabs>
+    </TransactionProvider>
   );
 }

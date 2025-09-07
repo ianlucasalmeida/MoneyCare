@@ -1,29 +1,52 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import React, { useEffect } from 'react';
+import { PaperProvider } from 'react-native-paper';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { theme } from '../constants/theme';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { ActivityIndicator, View } from 'react-native';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+function RootLayoutNav() {
+  const { signed, loading } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  useEffect(() => {
+    if (loading) return;
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (signed && inAuthGroup) {
+      // Se o usuário está logado e na tela de auth, manda para o app principal
+      router.replace('/(tabs)');
+    } else if (!signed) {
+      // Se não está logado, manda para o fluxo de auth
+      router.replace('/(auth)');
+    }
+  }, [signed, loading]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* Nossas duas principais seções do app */}
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(auth)" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <PaperProvider theme={theme}>
+        <RootLayoutNav />
+      </PaperProvider>
+    </AuthProvider>
   );
 }
