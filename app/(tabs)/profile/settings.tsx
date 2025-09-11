@@ -1,28 +1,59 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { List, Switch, Text, Divider, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Divider, List, Switch, useTheme } from 'react-native-paper';
+
+// MUDANÇA: A definição de tipo foi movida para o topo do arquivo,
+// fora de qualquer componente ou objeto.
+type SettingItem = {
+  title: string;
+  description?: string;
+  hasSwitch?: boolean;
+  value?: boolean;
+  onValueChange?: (value: boolean) => void;
+};
 
 const SettingsScreen = () => {
   const theme = useTheme();
   const [isNotificationsOn, setIsNotificationsOn] = React.useState(false);
+  const [isDarkTheme, setIsDarkTheme] = React.useState(true); // Supondo que o tema escuro está ativo
+
+  const settings: SettingItem[] = [
+    {
+      title: 'Receber notificações',
+      hasSwitch: true,
+      value: isNotificationsOn,
+      onValueChange: setIsNotificationsOn,
+    },
+    {
+      title: 'Tema Escuro',
+      hasSwitch: true,
+      value: isDarkTheme,
+      onValueChange: setIsDarkTheme, // Lógica futura para trocar tema
+    },
+    {
+      title: 'Versão do App',
+      description: '1.0.0',
+    },
+  ];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
-        <List.Subheader>Notificações</List.Subheader>
-        <List.Item
-          title="Receber notificações"
-          right={() => <Switch value={isNotificationsOn} onValueChange={setIsNotificationsOn} />}
-        />
-        <Divider />
-        <List.Subheader>Aparência</List.Subheader>
-        <List.Item
-          title="Tema Escuro"
-          right={() => <Switch value={true} disabled />} // Apenas demonstrativo
-        />
-        <Divider />
-        <List.Subheader>Sobre</List.Subheader>
-        <List.Item title="Versão do App" description="1.0.0" />
+        <List.Subheader>Preferências</List.Subheader>
+        {settings.map((item, index) => (
+          <React.Fragment key={item.title}>
+            <List.Item
+              title={item.title}
+              description={item.description}
+              right={() => 
+                item.hasSwitch ? (
+                  <Switch value={item.value} onValueChange={item.onValueChange} />
+                ) : null
+              }
+            />
+            {index < settings.length - 1 && <Divider />}
+          </React.Fragment>
+        ))}
       </List.Section>
     </View>
   );

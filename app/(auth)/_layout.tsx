@@ -1,11 +1,16 @@
-// app/(auth)/_layout.tsx
-import React from 'react';
 import { Stack } from 'expo-router';
+import React from 'react';
 
-// Este é o layout para o fluxo de autenticação.
-// Usamos uma Stack para navegar entre a tela inicial, login e cadastro.
 export default function AuthLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }} />
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        // MUDANÇA: Usando a cor de fundo diretamente para garantir
+        contentStyle: {
+          backgroundColor: '#121212', // Cor de fundo escura do nosso tema
+        },
+      }}
+    />
   );
 }
