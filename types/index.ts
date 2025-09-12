@@ -1,6 +1,7 @@
 export type TransactionType = 'entrada' | 'saida';
 
 export interface Category {
+  type: string;
   id: string;
   name: string;
   icon: string;
