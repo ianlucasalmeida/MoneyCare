@@ -1,78 +1,96 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { TransactionProvider } from '../../contexts/TransactionContext';
-import { Platform } from 'react-native';
+
+const TABS_CONFIG = [
+  { name: 'index', icon: 'view-dashboard-outline', activeIcon: 'view-dashboard', label: 'Dashboard' },
+  { name: 'list', icon: 'format-list-bulleted', activeIcon: 'format-list-bulleted', label: 'Lista de Transações' },
+  { name: 'add', icon: 'plus-circle-outline', activeIcon: 'plus-circle', label: 'Adicionar Transação', isCentral: true },
+  { name: 'currencies', icon: 'currency-usd', activeIcon: 'currency-usd', label: 'Moedas' },
+  { name: 'soon', icon: 'bullseye-arrow', activeIcon: 'bullseye-arrow', label: 'Metas' },
+  { name: 'profile', icon: 'account-circle-outline', activeIcon: 'account-circle', label: 'Perfil' },
+];
+
+const TAB_BAR_STYLE = {
+  height: 55,
+  borderRadius: 30,
+  bottomOffset: Platform.OS === 'ios' ? 34 : 20,
+  iconSize: {
+    default: 29,
+    central: 30,
+  },
+  colors: {
+    active: '#FFFFFF',
+    inactive: 'rgba(255, 255, 255, 0.7)',
+    shadow: 'rgba(0, 0, 0, 0.25)',
+  }
+};
 
 export default function TabLayout() {
   const theme = useTheme();
-  const iconSize = 26; // Tamanho padrão para todos os ícones
 
   return (
     <TransactionProvider>
       <Tabs
         screenOptions={{
           headerShown: false,
+          tabBarActiveTintColor: TAB_BAR_STYLE.colors.active,
+          tabBarInactiveTintColor: TAB_BAR_STYLE.colors.inactive,
+          
+          // MUDANÇA CRÍTICA: Removemos completamente o label da renderização
           tabBarShowLabel: false,
-          tabBarActiveTintColor: '#FFFFFF',
-          tabBarInactiveTintColor: '#FFFFFF',
+          tabBarLabel: () => null,
+
+          tabBarItemStyle: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 0, // Garante que não haja espaçamento vertical extra
+          },
+          
           tabBarStyle: {
             position: 'absolute',
-            bottom: Platform.OS === 'ios' ? 30 : 20,
-            marginHorizontal: 20,
+            bottom: TAB_BAR_STYLE.bottomOffset,
+            left: 20,
+            right: 20,
+            height: TAB_BAR_STYLE.height,
+            borderRadius: TAB_BAR_STYLE.borderRadius,
             backgroundColor: theme.colors.primary,
-            borderRadius: 30,
-            height: 60, // Altura ajustada
-            paddingBottom: Platform.OS === 'ios' ? 0 : 0,
-            elevation: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
+            shadowColor: TAB_BAR_STYLE.colors.shadow,
+            shadowOffset: { width: 0, height: 6 },
             shadowOpacity: 0.3,
-            shadowRadius: 4,
+            shadowRadius: 8,
+            elevation: 12,
+            borderTopWidth: 0,
           },
         }}
       >
-        <Tabs.Screen
-          name="index"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="view-dashboard" color={color} size={iconSize} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="list"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="format-list-bulleted" color={color} size={iconSize} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="add"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="plus-circle" color={color} size={iconSize + 10} /> // Ícone central maior
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="currencies"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="currency-usd" color={color} size={iconSize} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="account-circle" color={color} size={iconSize} />
-            ),
-          }}
-        />
+        {TABS_CONFIG.map(tab => (
+          <Tabs.Screen
+            key={tab.name}
+            name={tab.name}
+            options={{
+              tabBarAccessibilityLabel: tab.label,
+              tabBarIcon: ({ focused, color }) => {
+                const iconName = focused ? tab.activeIcon : tab.icon;
+                const iconSize = tab.isCentral
+                  ? TAB_BAR_STYLE.iconSize.central
+                  : focused ? TAB_BAR_STYLE.iconSize.default + 2 : TAB_BAR_STYLE.iconSize.default;
+                
+                return (
+                  <MaterialCommunityIcons
+                    name={iconName as any}
+                    color={color}
+                    size={iconSize}
+                  />
+                );
+              },
+            }}
+          />
+        ))}
       </Tabs>
     </TransactionProvider>
   );

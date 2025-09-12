@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Appbar, Button, TextInput, ToggleButton, useTheme } from 'react-native-paper';
-import { CategorySelector } from '../../components/AddTransaction/CategorySelector'; // Nosso novo componente
-import { useTransactionForm } from '../../hooks/useTransactionForm'; // Nosso novo hook
+import { Appbar, Button, Card, Text, TextInput, ToggleButton, useTheme } from 'react-native-paper';
+import { CategorySelector } from '../../components/AddTransaction/CategorySelector';
+import { useTransactionForm } from '../../hooks/useTransactionForm';
 
 const AddTransactionScreen = () => {
   const theme = useTheme();
@@ -16,36 +16,47 @@ const AddTransactionScreen = () => {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {/* Seletor de Tipo */}
-        <ToggleButton.Row
-          onValueChange={(value) => value && setField('type', value)}
-          value={state.type}
-          style={styles.toggleRow}
-        >
-          <ToggleButton icon="arrow-down-bold-box" value="saida" style={styles.toggleButton}>Despesa</ToggleButton>
-          <ToggleButton icon="arrow-up-bold-box" value="entrada" style={styles.toggleButton}>Receita</ToggleButton>
-        </ToggleButton.Row>
+        {/* Seção 1: Tipo de Transação */}
+        <Card style={styles.card}>
+          <Card.Content>
+            <Text variant="titleMedium" style={styles.cardTitle}>Tipo</Text>
+            <ToggleButton.Row
+              onValueChange={(value) => value && setField('type', value)}
+              value={state.type}
+              style={styles.toggleRow}
+            >
+              <ToggleButton icon="arrow-down-bold-box" value="saida" style={styles.toggleButton}>Despesa</ToggleButton>
+              <ToggleButton icon="arrow-up-bold-box" value="entrada" style={styles.toggleButton}>Receita</ToggleButton>
+            </ToggleButton.Row>
+          </Card.Content>
+        </Card>
 
-        {/* Formulário */}
-        <TextInput
-          label="Descrição *"
-          value={state.description}
-          onChangeText={(text) => setField('description', text)}
-          mode="outlined"
-          style={styles.input}
-          error={!!state.errors.description}
-        />
-        
-        <TextInput
-          label="Valor (R$) *"
-          value={state.amount}
-          onChangeText={(text) => setField('amount', text.replace(/[^0-9,]/g, ''))}
-          mode="outlined"
-          keyboardType="numeric"
-          style={styles.input}
-          error={!!state.errors.amount}
-        />
-        
+        {/* Seção 2: Detalhes Principais */}
+        <Card style={styles.card}>
+            <Card.Content>
+                <Text variant="titleMedium" style={styles.cardTitle}>Detalhes</Text>
+                <TextInput
+                    label="Descrição *"
+                    value={state.description}
+                    onChangeText={(text) => setField('description', text)}
+                    mode="outlined"
+                    style={styles.input}
+                    error={!!state.errors.description}
+                />
+                
+                <TextInput
+                    label="Valor (R$) *"
+                    value={state.amount}
+                    onChangeText={(text) => setField('amount', text.replace(/[^0-9,]/g, ''))}
+                    mode="outlined"
+                    keyboardType="numeric"
+                    style={styles.input}
+                    error={!!state.errors.amount}
+                />
+            </Card.Content>
+        </Card>
+
+        {/* Seção 3: Categoria */}
         <CategorySelector 
           selectedCategory={state.category}
           onSelect={(category) => setField('category', category)}
@@ -53,15 +64,21 @@ const AddTransactionScreen = () => {
           error={state.errors.category}
         />
         
-        <TextInput
-          label="Observações (opcional)"
-          value={state.notes}
-          onChangeText={(text) => setField('notes', text)}
-          mode="outlined"
-          style={styles.input}
-          multiline
-          numberOfLines={3}
-        />
+        {/* Seção 4: Detalhes Adicionais */}
+        <Card style={styles.card}>
+            <Card.Content>
+                <Text variant="titleMedium" style={styles.cardTitle}>Adicionais</Text>
+                <TextInput
+                    label="Observações (opcional)"
+                    value={state.notes}
+                    onChangeText={(text) => setField('notes', text)}
+                    mode="outlined"
+                    style={styles.input}
+                    multiline
+                    numberOfLines={3}
+                />
+            </Card.Content>
+        </Card>
 
         {/* Ações */}
         <Button
@@ -70,7 +87,8 @@ const AddTransactionScreen = () => {
           style={styles.saveButton}
           loading={state.isLoading}
           disabled={state.isLoading}
-          icon="check"
+          icon="check-circle-outline"
+          contentStyle={{ height: 50 }}
         >
           Salvar Transação
         </Button>
@@ -82,10 +100,25 @@ const AddTransactionScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 16, paddingBottom: 100 },
-  toggleRow: { marginBottom: 16, width: '100%' },
-  toggleButton: { flex: 1 },
-  input: { marginBottom: 16 },
-  saveButton: { paddingVertical: 8, marginTop: 16 },
+  card: {
+    marginBottom: 16,
+  },
+  cardTitle: {
+    marginBottom: 12,
+  },
+  toggleRow: {
+    width: '100%',
+  },
+  toggleButton: { 
+    flex: 1 
+  },
+  input: { 
+    marginBottom: 0 // Removido para que o HelperText do CategorySelector funcione
+  },
+  saveButton: { 
+    justifyContent: 'center',
+    marginTop: 8,
+  },
 });
 
 export default AddTransactionScreen;

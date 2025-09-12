@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Transaction } from '../types';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { Transaction } from '../types'; // Certifique-se que o caminho para seus tipos está correto
 
 interface TransactionContextData {
   transactions: Transaction[];
@@ -21,7 +21,7 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
         const storedTransactions = await AsyncStorage.getItem('@MoneyCare:transactions');
         if (storedTransactions) {
           // Converte as datas de string de volta para objetos Date
-          const parsedTransactions = JSON.parse(storedTransactions).map((t: Transaction) => ({
+          const parsedTransactions = JSON.parse(storedTransactions).map((t: any) => ({
             ...t,
             date: new Date(t.date),
           }));
@@ -40,20 +40,20 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
     try {
       const newTransaction: Transaction = {
         ...transaction,
-        id: new Date().toISOString() + Math.random(), // ID mais robusto
+        id: new Date().toISOString() + Math.random(),
         date: new Date(),
       };
 
       const updatedTransactions = [...transactions, newTransaction];
       setTransactions(updatedTransactions);
       
-      // Salva a lista inteira e atualizada no dispositivo
       await AsyncStorage.setItem('@MoneyCare:transactions', JSON.stringify(updatedTransactions));
     } catch (e) {
       console.error("Failed to save transaction.", e);
     }
   }
   
+  // O provider apenas envolve os componentes filhos, sem renderizar nada visual.
   return (
     <TransactionContext.Provider value={{ transactions, loading, addTransaction }}>
       {children}
