@@ -1,16 +1,19 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Platform, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View, Platform } from 'react-native';
 import { Avatar, Surface, Text, useTheme } from 'react-native-paper';
-import { User } from '../../../types'; // Ajuste o caminho para seus tipos
+import { LinearGradient } from 'expo-linear-gradient';
+import { User } from '../../../types'; // MUDANÇA: Importamos o tipo User
 
+// MUDANÇA: Definimos as props que o componente espera receber
 interface ProfileHeaderProps {
   user: User | null;
 }
 
-const getInitials = (name: string) => 
+// Função auxiliar para pegar as iniciais
+const getInitials = (name: string | undefined) => 
   name?.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2) || 'U';
 
+// MUDANÇA: O componente agora recebe 'user' como uma prop
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
   const theme = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -32,16 +35,19 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
         <View style={styles.avatarContainer}>
           <Avatar.Text 
             size={100}
-            label={getInitials(user?.name || '')}
+            // MUDANÇA: Usa os dados da prop 'user'
+            label={getInitials(user?.name)}
             style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
             labelStyle={styles.avatarLabel}
           />
           <View style={styles.onlineIndicator} />
         </View>
         <Text variant="headlineSmall" style={styles.userName}>
+          {/* MUDANÇA: Usa os dados da prop 'user' com um fallback */}
           {user?.name || 'Usuário'}
         </Text>
         <Text variant="bodyLarge" style={[styles.userEmail, { color: theme.colors.onSurfaceVariant }]}>
+          {/* MUDANÇA: Usa os dados da prop 'user' com um fallback */}
           {user?.email || 'email@exemplo.com'}
         </Text>
         <Surface style={styles.statusBadge} elevation={1}>
@@ -52,10 +58,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
   );
 };
 
+// Os estilos continuam os mesmos
 const styles = StyleSheet.create({
   headerGradient: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 60, // Aumentado para dar espaço ao card de stats
+    paddingBottom: 60,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
