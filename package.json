@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
+    "@nozbe/watermelondb": "^0.28.0",
+    "@nozbe/with-observables": "^1.6.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
@@ -45,7 +47,8 @@
     "react-native-svg": "^15.11.2",
     "react-native-vector-icons": "^10.3.0",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "expo-sqlite": "~15.2.14"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

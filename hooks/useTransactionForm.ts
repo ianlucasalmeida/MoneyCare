@@ -1,9 +1,10 @@
-import { useCallback, useReducer } from 'react';
+import { useReducer, useCallback } from 'react';
 import { Alert, Keyboard } from 'react-native';
+import { router } from 'expo-router';
 import { useTransactions } from '../contexts/TransactionContext';
 import { Category } from '../types';
 
-// Define o estado do nosso formulário
+// Define a "forma" do estado do nosso formulário
 interface FormState {
   type: 'saida' | 'entrada';
   description: string;
@@ -15,12 +16,13 @@ interface FormState {
   isLoading: boolean;
 }
 
-// Ações que podemos despachar para atualizar o estado
+// Ações que podemos usar para atualizar o estado
 type FormAction =
   | { type: 'SET_FIELD'; field: keyof FormState; payload: any }
   | { type: 'SET_ERRORS'; payload: { [key: string]: string | null } }
   | { type: 'RESET_FORM' };
 
+// O estado inicial do formulário, quando a tela é aberta ou limpa
 const initialState: FormState = {
   type: 'saida',
   description: '',
@@ -32,10 +34,10 @@ const initialState: FormState = {
   isLoading: false,
 };
 
+// A função que gerencia todas as alterações de estado
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
     case 'SET_FIELD':
-      // Ao mudar o tipo, reseta a categoria
       if (action.field === 'type') {
         return { ...state, [action.field]: action.payload, category: null, errors: { ...state.errors, category: null } };
       }
@@ -53,10 +55,12 @@ export const useTransactionForm = () => {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const { addTransaction } = useTransactions();
 
+  // Função auxiliar para atualizar um campo do formulário
   const setField = useCallback((field: keyof FormState, value: any) => {
     dispatch({ type: 'SET_FIELD', field, payload: value });
   }, []);
 
+  // Função para validar todos os campos antes de enviar
   const validate = useCallback(() => {
     const newErrors: { [key: string]: string | null } = {};
     if (!state.description.trim()) newErrors.description = 'Descrição é obrigatória';
@@ -68,6 +72,7 @@ export const useTransactionForm = () => {
     return Object.values(newErrors).every(error => !error);
   }, [state.description, state.amount, state.category]);
 
+  // Função principal para salvar a transação
   const saveTransaction = useCallback(async () => {
     Keyboard.dismiss();
     if (!validate()) {
@@ -77,22 +82,30 @@ export const useTransactionForm = () => {
 
     setField('isLoading', true);
     try {
-      await addTransaction({
+      // Monta o payload para enviar à API
+      const payload = {
         description: state.description.trim(),
         amount: parseFloat(state.amount.replace(',', '.')),
-        type: state.type,
-        category: state.category!,
+        // CORREÇÃO APLICADA AQUI: "Traduzimos" o tipo para o que a API espera
+        type: state.type === 'entrada' ? 'income' : 'expense',
+        categoryId: parseInt(state.category!.id, 10),
         date: state.date,
         notes: state.notes.trim(),
-      });
+      };
       
-      Alert.alert('Sucesso!', 'Transação salva.', [
-          { text: 'Adicionar Outra', onPress: () => dispatch({ type: 'RESET_FORM' }) },
-          { text: 'OK', style: 'default' },
-      ]);
+      const success = await addTransaction(payload as any);
+      
+      if (success) {
+          Alert.alert('Sucesso!', 'Transação salva.', [
+              { text: 'Adicionar Outra', onPress: () => dispatch({ type: 'RESET_FORM' }) },
+              { text: 'OK', onPress: () => { if (router.canGoBack()) router.back() } },
+          ]);
+      } else {
+          throw new Error('Falha ao salvar a transação na API.');
+      }
 
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar a transação.');
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Não foi possível salvar a transação.');
     } finally {
       setField('isLoading', false);
     }
