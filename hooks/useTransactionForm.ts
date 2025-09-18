@@ -1,6 +1,6 @@
-import { useReducer, useCallback } from 'react';
-import { Alert, Keyboard } from 'react-native';
 import { router } from 'expo-router';
+import { useCallback, useReducer } from 'react';
+import { Alert, Keyboard } from 'react-native';
 import { useTransactions } from '../contexts/TransactionContext';
 import { Category } from '../types';
 
@@ -53,6 +53,8 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
 
 export const useTransactionForm = () => {
   const [state, dispatch] = useReducer(formReducer, initialState);
+  
+  // MUDANÇA: Corrigimos o nome da função importada do contexto
   const { addTransaction } = useTransactions();
 
   // Função auxiliar para atualizar um campo do formulário
@@ -82,27 +84,22 @@ export const useTransactionForm = () => {
 
     setField('isLoading', true);
     try {
-      // Monta o payload para enviar à API
       const payload = {
         description: state.description.trim(),
         amount: parseFloat(state.amount.replace(',', '.')),
-        // CORREÇÃO APLICADA AQUI: "Traduzimos" o tipo para o que a API espera
         type: state.type === 'entrada' ? 'income' : 'expense',
-        categoryId: parseInt(state.category!.id, 10),
+        category: state.category!,
         date: state.date,
         notes: state.notes.trim(),
       };
       
-      const success = await addTransaction(payload as any);
+      // MUDANÇA: Usamos o nome correto da função aqui
+      await addTransaction(payload);
       
-      if (success) {
-          Alert.alert('Sucesso!', 'Transação salva.', [
-              { text: 'Adicionar Outra', onPress: () => dispatch({ type: 'RESET_FORM' }) },
-              { text: 'OK', onPress: () => { if (router.canGoBack()) router.back() } },
-          ]);
-      } else {
-          throw new Error('Falha ao salvar a transação na API.');
-      }
+      Alert.alert('Sucesso!', 'Transação salva localmente e sincronizando.', [
+          { text: 'Adicionar Outra', onPress: () => dispatch({ type: 'RESET_FORM' }) },
+          { text: 'OK', onPress: () => { if (router.canGoBack()) router.back() } },
+      ]);
 
     } catch (error: any) {
       Alert.alert('Erro', error.message || 'Não foi possível salvar a transação.');

@@ -1,24 +1,22 @@
 import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Divider, Surface, Text, useTheme } from 'react-native-paper';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useTransactions } from '../../../contexts/TransactionContext'; // <<-- 1. ACESSANDO OS DADOS REAIS
 import { ProfileHeader } from '../../../components/Profile/ProfileHeader';
 import { ProfileMenu } from '../../../components/Profile/ProfileMenu';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useTransactions } from '../../../contexts/TransactionContext';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
   const theme = useTheme();
   
-  // 1. ACESSANDO OS DADOS REAIS dos nossos contextos
   const { user, signOut } = useAuth();
   const { transactions } = useTransactions();
 
-  // 2. CALCULANDO ESTATÍSTICAS DINÂMICAS com base nos dados reais
   const stats = useMemo(() => {
     const expenseTransactions = transactions.filter(t => t.type === 'saida');
     const uniqueCategories = new Set(transactions.map(t => t.category.name));
-    
-    // Métrica mais útil do que "dias ativo"
     const totalSpent = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
     
     return {
@@ -26,112 +24,203 @@ const ProfileScreen: React.FC = () => {
       categoryCount: uniqueCategories.size,
       totalSpent: totalSpent.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     };
-  }, [transactions]); // Recalcula apenas quando as transações mudam
+  }, [transactions]);
 
   return (
-    // MUDANÇA DE LAYOUT: A View principal agora tem flex: 1 e não é mais rolável
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      
-      {/* O cabeçalho fica aqui, fixo no topo */}
-      <ProfileHeader user={user} />
-
-      {/* MUDANÇA DE LAYOUT: A ScrollView agora envolve apenas o conteúdo que deve rolar */}
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+    <SafeAreaView style={[styles.safeContainer, { backgroundColor: theme.colors.background }]}>
+      <View style={styles.container}>
         
-        {/* Card de Estatísticas Rápidas */}
-        <Card style={styles.statsCard}>
-          <Card.Content style={styles.statsContent}>
-            
-            {/* 3. EXIBINDO OS DADOS DINÂMICOS */}
-            <View style={styles.statItem}>
-              <Text variant="titleMedium" style={styles.statValue}>{stats.transactionCount}</Text>
-              <Text variant="bodySmall" style={styles.statLabel}>Transações</Text>
-            </View>
-            <Divider style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text variant="titleMedium" style={styles.statValue}>{stats.categoryCount}</Text>
-              <Text variant="bodySmall" style={styles.statLabel}>Categorias</Text>
-            </View>
-            <Divider style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text variant="titleMedium" style={styles.statValue}>{stats.totalSpent}</Text>
-              <Text variant="bodySmall" style={styles.statLabel}>Total Gasto</Text>
-            </View>
+        {/* Header fixo no topo */}
+        <View style={styles.headerContainer}>
+          <ProfileHeader user={user} />
+        </View>
 
-          </Card.Content>
-        </Card>
+        {/* Conteúdo scrollável */}
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+        >
+          
+          {/* Card de Estatísticas - agora com espaçamento adequado */}
+          <View style={styles.statsSection}>
+            <Card style={[styles.statsCard, { backgroundColor: theme.colors.surface }]}>
+              <Card.Content style={styles.statsContent}>
+                
+                <View style={styles.statItem}>
+                  <Text variant="titleLarge" style={[styles.statValue, { color: theme.colors.primary }]}>
+                    {stats.transactionCount}
+                  </Text>
+                  <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                    Transações
+                  </Text>
+                </View>
 
-        {/* Componente de Menu Abstraído */}
-        <ProfileMenu />
+                <Divider style={[styles.statDivider, { backgroundColor: theme.colors.outline }]} />
 
-        {/* Botão de Logout */}
-        <Surface style={styles.logoutContainer} elevation={4}>
-          <Button 
-            mode="contained"
-            icon="logout"
-            onPress={signOut}
-            style={styles.logoutButton}
-            contentStyle={styles.logoutButtonContent}
-            labelStyle={styles.logoutButtonLabel}
-            buttonColor={theme.colors.error}
+                <View style={styles.statItem}>
+                  <Text variant="titleLarge" style={[styles.statValue, { color: theme.colors.primary }]}>
+                    {stats.categoryCount}
+                  </Text>
+                  <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                    Categorias
+                  </Text>
+                </View>
+
+                <Divider style={[styles.statDivider, { backgroundColor: theme.colors.outline }]} />
+
+                <View style={styles.statItem}>
+                  <Text 
+                    variant="titleMedium" 
+                    style={[styles.statValue, { color: theme.colors.primary }]}
+                    numberOfLines={2}
+                    adjustsFontSizeToFit
+                  >
+                    {stats.totalSpent}
+                  </Text>
+                  <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                    Total Gasto
+                  </Text>
+                </View>
+
+              </Card.Content>
+            </Card>
+          </View>
+
+          {/* Menu de perfil */}
+          <View style={styles.menuSection}>
+            <ProfileMenu />
+          </View>
+
+          {/* Espaçador flexível para empurrar o botão para baixo quando necessário */}
+          <View style={styles.flexSpacer} />
+
+        </ScrollView>
+
+        {/* Botão de logout fixo na parte inferior */}
+        <View style={styles.logoutSection}>
+          <Surface 
+            style={[styles.logoutContainer, { backgroundColor: theme.colors.surface }]} 
+            elevation={4}
           >
-            Sair da Conta
-          </Button>
-        </Surface>
-      </ScrollView>
-    </View>
+            <Button 
+              mode="contained"
+              icon="logout"
+              onPress={signOut}
+              style={[styles.logoutButton, { backgroundColor: theme.colors.error }]}
+              contentStyle={styles.logoutButtonContent}
+              labelStyle={styles.logoutButtonLabel}
+            >
+              Sair da Conta
+            </Button>
+          </Surface>
+        </View>
+
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1 // Garante que o contêiner principal ocupe toda a tela
+  safeContainer: {
+    flex: 1,
   },
-  scrollContent: { 
-    flexGrow: 1, 
-    paddingBottom: 20 
+  container: {
+    flex: 1,
   },
-  statsCard: { 
-    marginHorizontal: 20, 
-    marginTop: -40, // Efeito de sobreposição sobre o header
-    borderRadius: 16, 
-    elevation: 8 
+  headerContainer: {
+    zIndex: 10,
+    elevation: 4,
   },
-  statsContent: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-around', 
-    alignItems: 'center', 
-    paddingVertical: 12 
+  scrollView: {
+    flex: 1,
   },
-  statItem: { 
-    alignItems: 'center', 
-    flex: 1 
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
   },
-  statValue: { 
-    fontWeight: 'bold' 
+  
+  // Seção de estatísticas
+  statsSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
-  statLabel: { 
-    opacity: 0.7, 
-    marginTop: 2 
+  statsCard: {
+    borderRadius: 16,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  statDivider: { 
-    height: 30, 
-    width: 1 
+  statsContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 8,
+    minHeight: 80,
   },
-  logoutContainer: { 
-    margin: 20, 
-    marginTop: 30, 
-    borderRadius: 16 
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+    paddingHorizontal: 4,
   },
-  logoutButton: { 
-    borderRadius: 16 
+  statValue: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 4,
   },
-  logoutButtonContent: { 
-    paddingVertical: 8 
+  statLabel: {
+    textAlign: 'center',
+    fontSize: 12,
+    opacity: 0.8,
   },
-  logoutButtonLabel: { 
-    fontSize: 16, 
-    fontWeight: '600' 
+  statDivider: {
+    height: 40,
+    width: 1,
+    marginHorizontal: 8,
+  },
+
+  // Seção do menu
+  menuSection: {
+    paddingTop: 8,
+  },
+
+  // Espaçador flexível
+  flexSpacer: {
+    minHeight: 20,
+  },
+
+  // Seção do logout
+  logoutSection: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.05)',
+  },
+  logoutContainer: {
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  logoutButton: {
+    borderRadius: 16,
+    minHeight: 48,
+  },
+  logoutButtonContent: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  logoutButtonLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
 });
 

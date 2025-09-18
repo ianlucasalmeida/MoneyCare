@@ -1,20 +1,19 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, Card, Divider, IconButton, List, Text } from 'react-native-paper';
-import { Transaction } from '../../../types'; // Ajuste o caminho para seus tipos
+import { Transaction } from '../../../types';
 
 interface RecentTransactionsListProps {
   transactions: Transaction[];
-  transactionCount: number;
-  period: string;
 }
 
-export const RecentTransactionsList: React.FC<RecentTransactionsListProps> = ({ transactions, transactionCount, period }) => {
-  const periodLabels = { '7d': 'nos últimos 7 dias', '30d': 'nos últimos 30 dias', '3m': 'nos últimos 3 meses', '1y': 'no último ano' };
-
+export const RecentTransactionsList: React.FC<RecentTransactionsListProps> = ({ transactions }) => {
   return (
     <Card style={styles.card}>
-      <Card.Title title="Transações Recentes" subtitle={`${transactionCount} transações ${periodLabels[period]}`} right={(props) => <IconButton {...props} icon="history" />} />
+      <Card.Title 
+        title="Transações Recentes" 
+        right={(props) => <IconButton {...props} icon="history" />} 
+      />
       <Card.Content>
         {transactions.length > 0 ? (
           transactions.map((item, index) => (
@@ -26,13 +25,13 @@ export const RecentTransactionsList: React.FC<RecentTransactionsListProps> = ({ 
                   <Avatar.Icon 
                     size={40} 
                     icon={item.category?.icon || 'help-circle'} 
-                    color={item.type === 'entrada' ? '#4CAF50' : '#F44336'}
-                    style={{ backgroundColor: item.type === 'entrada' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)' }}
+                    color={item.type === 'income' ? '#4CAF50' : '#F44336'}
+                    style={{ backgroundColor: item.type === 'income' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)' }}
                   />
                 )}
                 right={() => (
-                  <Text style={[styles.amount, { color: item.type === 'entrada' ? '#4CAF50' : '#F44336' }]}>
-                    {item.type === 'saida' ? '- ' : '+ '}R$ {item.amount.toFixed(2)}
+                  <Text style={[styles.amount, { color: item.type === 'income' ? '#4CAF50' : '#F44336' }]}>
+                    {item.type === 'expense' ? '- ' : '+ '}R$ {item.amount.toFixed(2)}
                   </Text>
                 )}
               />
