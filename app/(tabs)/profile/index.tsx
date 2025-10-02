@@ -5,6 +5,7 @@ import { ProfileHeader } from '../../../components/Profile/ProfileHeader';
 import { ProfileMenu } from '../../../components/Profile/ProfileMenu';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useTransactions } from '../../../contexts/TransactionContext';
+import { red } from 'react-native-reanimated/lib/typescript/Colors';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
 
   // Seção do menu
   menuSection: {
-    paddingTop: 8,
+    paddingTop: 0,
   },
 
   // Espaçador flexível
@@ -199,9 +200,9 @@ const styles = StyleSheet.create({
 
   // Seção do logout
   logoutSection: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 25,
     paddingTop: 12,
-    paddingBottom: 16,
+    paddingBottom: 90,
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.05)',
   },

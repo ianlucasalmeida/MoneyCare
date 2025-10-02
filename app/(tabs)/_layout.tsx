@@ -10,21 +10,20 @@ const TABS_CONFIG = [
   { name: 'list', icon: 'format-list-bulleted', activeIcon: 'format-list-bulleted', label: 'Lista de Transações' },
   { name: 'add', icon: 'plus-circle-outline', activeIcon: 'plus-circle', label: 'Adicionar Transação', isCentral: true },
   { name: 'currencies', icon: 'currency-usd', activeIcon: 'currency-usd', label: 'Moedas' },
-  { name: 'soon', icon: 'bullseye-arrow', activeIcon: 'bullseye-arrow', label: 'Metas' },
   { name: 'profile', icon: 'account-circle-outline', activeIcon: 'account-circle', label: 'Perfil' },
 ];
 
 const TAB_BAR_STYLE = {
   height: 55,
-  borderRadius: 30,
+  borderRadius: 20,
   bottomOffset: Platform.OS === 'ios' ? 34 : 20,
   iconSize: {
     default: 29,
     central: 30,
   },
   colors: {
-    active: '#FFFFFF',
-    inactive: 'rgba(255, 255, 255, 0.7)',
+    active: '#ffffffff',
+    inactive: 'rgba(0, 0, 0, 0.7)',
     shadow: 'rgba(0, 0, 0, 0.25)',
   }
 };
@@ -48,7 +47,7 @@ export default function TabLayout() {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            paddingVertical: 0, // Garante que não haja espaçamento vertical extra
+            paddingVertical: 6, // Garante que não haja espaçamento vertical extra
           },
           
           tabBarStyle: {
@@ -63,7 +62,7 @@ export default function TabLayout() {
             shadowOffset: { width: 0, height: 6 },
             shadowOpacity: 0.3,
             shadowRadius: 8,
-            elevation: 12,
+            elevation: 4,
             borderTopWidth: 0,
           },
         }}

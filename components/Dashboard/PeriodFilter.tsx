@@ -10,8 +10,13 @@ const styles = StyleSheet.create({
     padding: 8,
     elevation: 2,
     marginVertical: 8,
-    borderRadius: 8,
+    borderRadius: 16,
   },
+  
+  
+  chipStyle: {
+    marginHorizontal: 2, // Espaçamento horizontal
+  }
 });
 
 const periods = [
@@ -34,6 +39,8 @@ export const PeriodFilter: React.FC<PeriodFilterProps> = ({ selectedPeriod, onSe
           key={period.key}
           mode={selectedPeriod === period.key ? 'flat' : 'outlined'}
           onPress={() => onSelectPeriod(period.key)}
+          // ADICIONE A LINHA ABAIXO
+          style={styles.chipStyle} // Ou style={{ marginHorizontal: 4 }}
           // ... (outras props)
         >
           {period.label}

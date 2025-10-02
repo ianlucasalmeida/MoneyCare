@@ -4,7 +4,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Button, useTheme, ActivityIndicator, Portal, Modal } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native'; // MUDANÇA CRÍTICA AQUI
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
+import { red } from 'react-native-reanimated/lib/typescript/Colors';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.106:3000';
 
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: 'center', backgroundColor: 'black' },
     loadingOverlay: { justifyContent: 'center', alignItems: 'center' },
     loadingText: { color: 'white', marginTop: 16, fontSize: 18, fontWeight: 'bold' },
-    closeButton: { position: 'absolute', bottom: 50, left: 20, right: 20 },
+    closeButton: { position: 'absolute', bottom: 90, left: 120, right: 120},
 });
 
 export default ScannerScreen;

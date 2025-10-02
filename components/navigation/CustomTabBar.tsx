@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   centralIconContainer: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: ,
     justifyContent: 'center',
     alignItems: 'center',
     transform: [{ translateY: -20 }],

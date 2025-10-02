@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
   },
   toggleButton: { 
     flex: 1 
+
   },
   input: { 
     marginBottom: 4

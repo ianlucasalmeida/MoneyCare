@@ -46,11 +46,11 @@ export const ProfileMenu: React.FC = () => {
 
 // Os estilos permanecem os mesmos
 const styles = StyleSheet.create({
-  menuSection: { paddingHorizontal: 20, marginTop: 20 },
+  menuSection: { paddingHorizontal: 20, marginTop: 15 },
   sectionTitle: { marginBottom: 16, fontWeight: '600', opacity: 0.9 },
   menuContainer: { gap: 12 },
   menuItem: { borderRadius: 16, overflow: 'hidden' }, // overflow: 'hidden' para o ripple effect
-  iconContainer: { width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  iconContainer: { width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center', marginRight: 0, marginLeft: 15 },
   menuTitle: { fontWeight: 'bold' },
   menuDescription: { fontSize: 13, opacity: 0.7, marginTop: 2 },
 });
