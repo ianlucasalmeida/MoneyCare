@@ -34,7 +34,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({ selectedCate
                     mode="outlined"
                     onPress={() => setModalVisible(true)}
                     icon="tag-plus-outline"
-                    style={error ? { borderColor: theme.colors.error, marginBottom: 4 } : { marginBottom: 4 }}
+                    style={error ? { borderColor: theme.colors.error, marginBottom: 4 } : { marginBottom: 0 }}
                     contentStyle={{ paddingVertical: 8 }}
                 >
                     Selecionar Categoria
