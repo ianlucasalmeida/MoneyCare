@@ -1,3 +1,5 @@
+// ianlucasalmeida/moneycare/MoneyCare-lucas/types/index.ts
+
 export type TransactionType = 'entrada' | 'saida';
 
 export interface Category {
@@ -26,6 +28,7 @@ export interface Transaction {
 }
 
 export interface User {
+  id: string; // MUDANÇA: Adicionado o ID do usuário
   name: string;
   email: string;
   password?: string;

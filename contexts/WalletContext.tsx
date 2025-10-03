@@ -1,10 +1,13 @@
+// ianlucasalmeida/moneycare/MoneyCare-lucas/contexts/WalletContext.tsx
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { Wallet } from '../types';
 import { useAuth } from './AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
-const WALLETS_STORAGE_KEY = '@MoneyCare:wallets';
+// MUDANÇA: A chave base agora é uma constante
+const WALLETS_STORAGE_KEY_BASE = '@MoneyCare:wallets';
 
 interface WalletContextData {
   wallets: Wallet[];
@@ -18,29 +21,46 @@ const WalletContext = createContext<WalletContextData>({} as WalletContextData);
 export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState(true);
-  const { token, signed } = useAuth();
+  const { token, signed, user } = useAuth(); // MUDANÇA: Obtemos o objeto 'user'
+
+  // MUDANÇA: A chave de armazenamento agora inclui o ID do usuário
+  const getStorageKey = useCallback(() => {
+    if (!user?.id) return null;
+    return `${WALLETS_STORAGE_KEY_BASE}_${user.id}`;
+  }, [user]);
 
   const syncWallets = useCallback(async () => {
-    if (!signed || !token || !API_URL) return;
+    const key = getStorageKey();
+    if (!signed || !token || !API_URL || !key) return;
     
     try {
       const response = await fetch(`${API_URL}/wallets`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (response.ok) {
         const apiWallets = await response.json();
-        await AsyncStorage.setItem(WALLETS_STORAGE_KEY, JSON.stringify(apiWallets));
+        await AsyncStorage.setItem(key, JSON.stringify(apiWallets));
         setWallets(apiWallets);
+        console.log(`Caixinhas sincronizadas para o usuário ${user?.id}.`);
       }
     } catch (e) {
       console.error("Falha ao sincronizar caixinhas:", e);
     }
-  }, [signed, token]);
+  }, [signed, token, getStorageKey, user]);
 
+  // MUDANÇA: O efeito agora depende do status de login e do usuário
   useEffect(() => {
     async function loadInitialData() {
+      const key = getStorageKey();
+      if (!key) return;
+      
       setLoading(true);
       try {
-        const stored = await AsyncStorage.getItem(WALLETS_STORAGE_KEY);
-        if (stored) setWallets(JSON.parse(stored));
+        const stored = await AsyncStorage.getItem(key);
+        if (stored) {
+            setWallets(JSON.parse(stored));
+        } else {
+            // Se não houver dados para este usuário, garanta que o estado esteja vazio
+            setWallets([]);
+        }
       } catch (e) { 
         console.error("Falha ao carregar caixinhas do AsyncStorage.", e);
       } finally {
@@ -49,8 +69,15 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         await syncWallets();
       }
     }
-    loadInitialData();
-  }, [syncWallets]);
+
+    if (signed && user?.id) { 
+        loadInitialData();
+    } else {
+        // Se o usuário deslogou, limpa o estado em memória
+        setWallets([]);
+        setLoading(false);
+    }
+  }, [signed, user, syncWallets, getStorageKey]);
 
   const createWallet = useCallback(async (data: Omit<Wallet, 'id' | 'currentAmount'>): Promise<boolean> => {
     if (!token || !API_URL) return false;
