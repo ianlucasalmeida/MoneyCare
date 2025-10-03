@@ -7,6 +7,14 @@ export interface Category {
   icon: string;
 }
 
+export interface TransactionItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
 export interface Transaction {
   id: string;
   description: string;
@@ -14,6 +22,7 @@ export interface Transaction {
   type: TransactionType;
   date: Date;
   category: Category;
+  items?: TransactionItem[];
 }
 
 export interface User {

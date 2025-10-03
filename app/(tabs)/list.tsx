@@ -90,10 +90,10 @@ const TransactionListComponent: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  listContent: { flexGrow: 1, paddingBottom: 100 },
+  listContent: { flexGrow: 1, paddingBottom: 100, paddingLeft: 12 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   amount: { alignSelf: 'center', fontWeight: 'bold', fontSize: 16 },
-  innerItem: { paddingLeft: 60 }, // Adiciona um recuo para os itens da nota
+  innerItem: { paddingLeft: 40 }, // Adiciona um recuo para os itens da nota
   itemTitle: { fontSize: 14 },
   itemDescription: { fontSize: 12, opacity: 0.7 },
   itemTotal: { alignSelf: 'center', fontSize: 14, fontWeight: '500' },

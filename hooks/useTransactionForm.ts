@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useCallback, useReducer } from 'react';
 import { Alert, Keyboard } from 'react-native';
 import { useTransactions } from '../contexts/TransactionContext';
-import { Category } from '../types';
+import { Category, TransactionItem } from '../types';
 
 // Define a "forma" do estado do nosso formulário
 interface FormState {
@@ -12,6 +12,7 @@ interface FormState {
   category: Category | null;
   date: Date;
   notes: string;
+  items: TransactionItem[] | null;
   errors: { [key: string]: string | null };
   isLoading: boolean;
 }
@@ -30,6 +31,7 @@ const initialState: FormState = {
   category: null,
   date: new Date(),
   notes: '',
+  items: null,
   errors: {},
   isLoading: false,
 };
@@ -91,6 +93,7 @@ export const useTransactionForm = () => {
         category: state.category!,
         date: state.date,
         notes: state.notes.trim(),
+        items: state.items,
       };
       
       // MUDANÇA: Usamos o nome correto da função aqui

@@ -25,6 +25,7 @@ const AddTransactionScreen = () => {
         setField('date', data.date ? new Date(data.date) : new Date());
         setField('category', data.category || null);
         setField('type', data.type || 'saida');
+        setField('items', data.items || null);
 
       } catch (e) {
         console.error("Erro ao processar dados escaneados:", e);
