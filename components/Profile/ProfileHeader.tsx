@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View, Platform } from 'react-native';
 import { Avatar, Surface, Text, useTheme } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User } from '../../../types'; // MUDANÇA: Importamos o tipo User
+import { User } from '../../../types'; 
 
-// MUDANÇA: Definimos as props que o componente espera receber
+
 interface ProfileHeaderProps {
   user: User | null;
 }

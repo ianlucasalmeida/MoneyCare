@@ -1,5 +1,3 @@
-// ianlucasalmeida/moneycare/MoneyCare-lucas/types/index.ts
-
 export type TransactionType = 'entrada' | 'saida';
 
 export interface Category {

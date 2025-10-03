@@ -1,5 +1,3 @@
-// ianlucasalmeida/moneycare/MoneyCare-lucas/contexts/TransactionContext.tsx
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { Transaction } from '../types';

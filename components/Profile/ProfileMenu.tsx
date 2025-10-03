@@ -1,4 +1,4 @@
-import { router } from 'expo-router'; // MUDANÇA: Importamos o router
+import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IconButton, List, Surface, Text, TouchableRipple } from 'react-native-paper';

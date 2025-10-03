@@ -1,6 +1,3 @@
-// No seu projeto React Native
-// Arquivo: contexts/AuthContext.tsx
-
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User, AuthCredentials } from '../types';
